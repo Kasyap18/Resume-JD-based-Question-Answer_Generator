@@ -21,3 +21,10 @@ AI-powered web app that generates personalized interview questions and answers f
 - **Environment Management**: Python-dotenv  
 
 ---
+
+## ⚡ Workflow  
+1. User selects **mode** → Resume or Job Description.  
+2. Uploads a **resume (PDF)** or pastes a **job description**.  
+3. App **extracts skills** and **generates tailored questions**.  
+4. User can **choose question count**.  
+5. On demand, Gemini AI generates **professional answers**.  
