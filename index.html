@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Questions Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            height: calc(100vh - 24px);
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin: 0 0 25px 0;
+            font-size: 2.3em;
+            font-weight: 300;
+        }
+        
+        /* Mode Selection */
+        .mode-selection {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+        .mode-option {
+            flex: 1;
+            max-width: 300px;
+        }
+        .mode-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        .mode-card:hover {
+            border-color: #007bff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,123,255,0.2);
+        }
+        .mode-card.active {
+            border-color: #007bff;
+            background: #e3f2fd;
+        }
+        .mode-card h3 {
+            margin: 0 0 8px 0;
+            color: #333;
+            font-size: 1.1em;
+        }
+        .mode-card p {
+            margin: 0;
+            color: #666;
+            font-size: 13px;
+        }
+        
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 20px;
+            padding: 18px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+        .form-section.hidden {
+            display: none;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+        input[type="file"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        input[type="file"]:focus, textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        textarea {
+            min-height: 85px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        /* Slider Styles */
+        .slider-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .slider-group {
+            flex: 1;
+            background: white;
+            padding: 18px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .slider-label label {
+            margin-bottom: 0;
+            font-size: 14px;
+        }
+        .slider-value {
+            background: #007bff;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: bold;
+            min-width: 25px;
+            text-align: center;
+            font-size: 13px;
+        }
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,123,255,0.3);
+        }
+        .slider::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0,123,255,0.3);
+        }
+        
+        /* Button */
+        .generate-btn {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 14px 35px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,123,255,0.3);
+        }
+        .generate-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+            color: #666;
+        }
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        .loading p {
+            font-size: 14px;
+            margin: 0;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Results */
+        .questions-section {
+            margin-top: 20px;
+        }
+        .question-type {
+            margin-bottom: 25px;
+        }
+        .question-type h3 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 8px;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        .question-item {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            transition: transform 0.2s ease;
+        }
+        .question-item:hover {
+            transform: translateX(3px);
+        }
+        .question-text {
+            margin-bottom: 12px;
+            font-weight: 500;
+            color: #333;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+        .answer-section {
+            margin-top: 10px;
+        }
+        .answer-button {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .answer-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(40,167,69,0.3);
+        }
+        .answer-text {
+            background: white;
+            padding: 14px;
+            border-radius: 6px;
+            margin-top: 10px;
+            border-left: 3px solid #28a745;
+            line-height: 1.5;
+            color: #333;
+            font-size: 13px;
+        }
+        
+        /* Skills Display */
+        .skills-found {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 16px;
+            border-radius: 8px;
+            margin: 18px 0;
+            border-left: 4px solid #2196f3;
+        }
+        .skills-found h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+        }
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .skill-tag {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 500;
+            box-shadow: 0 2px 6px rgba(0,123,255,0.2);
+        }
+        
+        /* Error and Success Messages */
+        .error {
+            color: #dc3545;
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            padding: 14px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid #dc3545;
+            font-size: 14px;
+        }
+        .success {
+            color: #155724;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            padding: 11px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+        
+        /* Mode Badge */
+        .mode-badge {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 5px 14px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            .container {
+                padding: 18px;
+                height: calc(100vh - 16px);
+            }
+            .mode-selection {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .slider-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Interview Questions Generator</h1>
+        
+        <!-- Mode Selection -->
+        <div class="mode-selection">
+            <div class="mode-option">
+                <div class="mode-card active" data-mode="resume">
+                    <h3>📄 Resume-Based</h3>
+                    <p>Generate questions based on candidate's resume and experience</p>
+                </div>
+            </div>
+            <div class="mode-option">
+                <div class="mode-card" data-mode="jd">
+                    <h3>💼 Job Description-Based</h3>
+                    <p>Generate questions based on job requirements and role expectations</p>
+                </div>
+            </div>
+        </div>
+        
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="hidden" id="mode" name="mode" value="resume">
+            
+            <!-- Resume Upload Section -->
+            <div id="resumeSection" class="form-section">
+                <div class="form-group">
+                    <label for="resume">📎 Upload Resume (PDF):</label>
+                    <input type="file" id="resume" name="resume" accept=".pdf">
+                </div>
+            </div>
+            
+            <!-- Job Description Section -->
+            <div id="jdSection" class="form-section hidden">
+                <div class="form-group">
+                    <label for="job_description">📋 Job Description:</label>
+                    <textarea id="job_description" name="job_description" 
+                              placeholder="Paste the complete job description here including requirements, responsibilities, and qualifications..."></textarea>
+                </div>
+            </div>
+            
+            <!-- Question Count Sliders -->
+            <div class="slider-container">
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <label>🔧 Technical Questions</label>
+                        <span class="slider-value" id="techValue">5</span>
+                    </div>
+                    <input type="range" id="tech_count" name="tech_count" 
+                           min="1" max="15" value="5" class="slider">
+                </div>
+                
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <label>💬 Non-Technical Questions</label>
+                        <span class="slider-value" id="nontechValue">5</span>
+                    </div>
+                    <input type="range" id="nontech_count" name="nontech_count" 
+                           min="1" max="15" value="5" class="slider">
+                </div>
+            </div>
+            
+            <button type="submit" id="submitBtn" class="generate-btn">
+                Generate Questions
+            </button>
+        </form>
+        
+        <div id="loading" class="loading" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p>Analyzing content and generating personalized questions...</p>
+        </div>
+        
+        <div id="results" class="questions-section" style="display: none;">
+            <div class="mode-badge" id="modeBadge">Resume-Based Questions</div>
+            
+            <div id="skillsFound" class="skills-found" style="display: none;">
+                <h4>🎯 Skills Detected:</h4>
+                <div id="skillsList" class="skills-list"></div>
+            </div>
+            
+            <div id="technicalQuestions" class="question-type">
+                <h3>🔧 Technical Questions</h3>
+                <div id="techQuestionsContainer"></div>
+            </div>
+            
+            <div id="nontechQuestions" class="question-type">
+                <h3>💬 Non-Technical/HR Questions</h3>
+                <div id="nontechQuestionsContainer"></div>
+            </div>
+        </div>
+        
+        <div id="error" class="error" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Mode Selection
+        document.querySelectorAll('.mode-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Remove active class from all cards
+                document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+                
+                // // active class to clicked card
+                this.classList.add('active');
+                
+                // Update mode
+                const mode = this.dataset.mode;
+                document.getElementById('mode').value = mode;
+                
+                // Show/hide appropriate sections
+                if (mode === 'resume') {
+                    document.getElementById('resumeSection').classList.remove('hidden');
+                    document.getElementById('jdSection').classList.add('hidden');
+                    document.getElementById('resume').required = true;
+                    document.getElementById('job_description').required = false;
+                } else {
+                    document.getElementById('resumeSection').classList.add('hidden');
+                    document.getElementById('jdSection').classList.remove('hidden');
+                    document.getElementById('resume').required = false;
+                    document.getElementById('job_description').required = true;
+                }
+                
+                // Clear previous results
+                document.getElementById('results').style.display = 'none';
+                document.getElementById('error').style.display = 'none';
+            });
+        });
+        
+        // Slider Updates
+        document.getElementById('tech_count').addEventListener('input', function() {
+            document.getElementById('techValue').textContent = this.value;
+        });
+        
+        document.getElementById('nontech_count').addEventListener('input', function() {
+            document.getElementById('nontechValue').textContent = this.value;
+        });
+        
+        // Form Submission
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const mode = document.getElementById('mode').value;
+            const techCount = document.getElementById('tech_count').value;
+            const nontechCount = document.getElementById('nontech_count').value;
+            
+            // Validation based on mode
+            if (mode === 'resume') {
+                const resumeFile = document.getElementById('resume').files[0];
+                if (!resumeFile) {
+                    showError('Please select a PDF resume file.');
+                    return;
+                }
+                formData.append('resume', resumeFile);
+            } else {
+                const jobDescription = document.getElementById('job_description').value.trim();
+                if (!jobDescription) {
+                    showError('Please provide a job description.');
+                    return;
+                }
+                formData.append('job_description', jobDescription);
+            }
+            
+            formData.append('mode', mode);
+            formData.append('tech_count', techCount);
+            formData.append('nontech_count', nontechCount);
+            
+            // Show loading state
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = 'Generating...';
+            
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    displayQuestions(data);
+                    displaySkills(data.skills_found);
+                    updateModeBadge(data.mode);
+                }
+            } catch (error) {
+                showError('An error occurred while processing your request.');
+                console.error('Error:', error);
+            } finally {
+                // Hide loading state
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('submitBtn').textContent = 'Generate Questions';
+            }
+        });
+        
+        function updateModeBadge(mode) {
+            const badge = document.getElementById('modeBadge');
+            if (mode === 'resume') {
+                badge.textContent = '📄 Resume-Based Questions';
+                badge.style.background = '#007bff';
+            } else {
+                badge.textContent = '💼 Job Description-Based Questions';
+                badge.style.background = '#28a745';
+            }
+        }
+        
+        function displaySkills(skills) {
+            const skillsSection = document.getElementById('skillsFound');
+            const skillsList = document.getElementById('skillsList');
+            
+            skillsList.innerHTML = '';
+            if (skills && skills.length > 0) {
+                skills.slice(0, 15).forEach(skill => {
+                    const skillTag = document.createElement('span');
+                    skillTag.className = 'skill-tag';
+                    skillTag.textContent = skill;
+                    skillsList.appendChild(skillTag);
+                });
+                skillsSection.style.display = 'block';
+            } else {
+                skillsSection.style.display = 'none';
+            }
+        }
+        
+        function displayQuestions(data) {
+            const techContainer = document.getElementById('techQuestionsContainer');
+            const nontechContainer = document.getElementById('nontechQuestionsContainer');
+            const mode = data.mode;
+            
+            // Clear previous results
+            techContainer.innerHTML = '';
+            nontechContainer.innerHTML = '';
+            
+            // Get context for answer generation
+            let context = '';
+            if (mode === 'resume') {
+                // We don't have resume text in response, but we can use skills as context
+                context = data.skills_found ? data.skills_found.join(', ') : '';
+            } else {
+                context = document.getElementById('job_description').value;
+            }
+            
+            // Display technical questions
+            data.technical_questions.forEach(question => {
+                const questionDiv = createQuestionElement(question, mode, context);
+                techContainer.appendChild(questionDiv);
+            });
+            
+            // Display non-technical questions
+            data.nontechnical_questions.forEach(question => {
+                const questionDiv = createQuestionElement(question, mode, context);
+                nontechContainer.appendChild(questionDiv);
+            });
+            
+            document.getElementById('results').style.display = 'block';
+        }
+        
+        function createQuestionElement(question, mode, context) {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-item';
+            
+            const questionText = document.createElement('div');
+            questionText.className = 'question-text';
+            questionText.textContent = question;
+            
+            const answerSection = document.createElement('div');
+            answerSection.className = 'answer-section';
+            
+            const answerButton = document.createElement('button');
+            answerButton.className = 'answer-button';
+            answerButton.textContent = '💡 Generate Answer';
+            answerButton.onclick = () => generateAnswer(question, answerSection, answerButton, mode, context);
+            
+            answerSection.appendChild(answerButton);
+            questionDiv.appendChild(questionText);
+            questionDiv.appendChild(answerSection);
+            
+            return questionDiv;
+        }
+        
+        async function generateAnswer(question, answerSection, button, mode, context) {
+            button.disabled = true;
+            button.textContent = '⏳ Generating...';
+            
+            try {
+                const response = await fetch('/generate_answer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        question: question,
+                        mode: mode,
+                        context: context
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showError('Failed to generate answer: ' + data.error);
+                } else {
+                    // Remove existing answer if any
+                    const existingAnswer = answerSection.querySelector('.answer-text');
+                    if (existingAnswer) {
+                        existingAnswer.remove();
+                    }
+                    
+                    const answerDiv = document.createElement('div');
+                    answerDiv.className = 'answer-text';
+                    answerDiv.textContent = data.answer;
+                    answerSection.appendChild(answerDiv);
+                    
+                    button.textContent = '🔄 Regenerate Answer';
+                }
+            } catch (error) {
+                showError('An error occurred while generating the answer.');
+                console.error('Error:', error);
+            } finally {
+                button.disabled = false;
+                if (button.textContent === '⏳ Generating...') {
+                    button.textContent = '💡 Generate Answer';
+                }
+            }
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            
+            // Auto-hide error after 5 seconds
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

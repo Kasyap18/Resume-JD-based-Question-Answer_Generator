@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Q&A Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px 0;
+        }
+        .container {
+            max-width: 900px;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .card-header {
+            background-color: #4a6fdc;
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+        }
+        .question-card {
+            margin-bottom: 20px;
+            border-left: 4px solid #4a6fdc;
+        }
+        .question {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .answer {
+            background-color: #f1f5fd;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+        .section-title {
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4a6fdc;
+            color: #2c3e50;
+        }
+        .btn-back {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="btn btn-outline-primary btn-back">← Back to Upload</a>
+        
+        <div class="card">
+            <div class="card-header text-center">
+                <h2>Generated Questions & Answers</h2>
+            </div>
+            <div class="card-body">
+                <!-- Technical Questions Section -->
+                <h3 class="section-title">Technical Questions</h3>
+                {% for qa in technical_qa %}
+                <div class="question-card p-3">
+                    <div class="question">{{ qa.question }}</div>
+                    <div class="answer">{{ qa.answer }}</div>
+                </div>
+                {% endfor %}
+                
+                <!-- Non-Technical Questions Section -->
+                <h3 class="section-title">Non-Technical Questions</h3>
+                {% for qa in nontechnical_qa %}
+                <div class="question-card p-3">
+                    <div class="question">{{ qa.question }}</div>
+                    <div class="answer">{{ qa.answer }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
