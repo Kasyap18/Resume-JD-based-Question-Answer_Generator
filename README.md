@@ -1,7 +1,6 @@
 # Resume-JD-based-Question-Answer_Generator
 AI-powered web app that generates personalized interview questions and answers from resumes or job descriptions using Gemini AI.
 
-🚀 An AI-powered web application built with **Flask** and **Gemini AI API** that generates **personalized interview questions and answers** from resumes or job descriptions.  
 ---
 
 ## 📌 Features  
