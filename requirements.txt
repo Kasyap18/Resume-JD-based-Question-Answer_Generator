@@ -1,0 +1,13 @@
+flask==2.3.3
+openai==1.3.0
+PyPDF2==3.0.1
+python-dotenv==1.0.0
+flask-wtf==1.1.1
+
+
+
+gemini 2.0 flash
+google ai studio
+
+python app.py
+
